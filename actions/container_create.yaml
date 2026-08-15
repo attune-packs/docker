@@ -1,35 +1,77 @@
-{
-  "ref": "docker.container_create",
-  "label": "Create Restricted Docker Container",
-  "description": "Create a resource-bounded container without mounts or privileged capabilities",
-  "enabled": true,
-  "runner_type": "python",
-  "runtime_version": ">=3.10",
-  "entry_point": "docker_action.py",
-  "parameter_delivery": "stdin",
-  "parameter_format": "json",
-  "output_format": "json",
-  "parameters": {
-    "daemon_key": {"type": "string", "default": "docker.daemon", "required": true},
-    "image": {"type": "string", "required": true},
-    "name": {"type": "string"},
-    "command": {"type": "array", "items": {"type": "string"}, "description": "Argv array; never interpreted by a shell"},
-    "environment": {"type": "object", "default": {}, "secret": true},
-    "labels": {"type": "object", "default": {}},
-    "user": {"type": "string"},
-    "working_directory": {"type": "string"},
-    "read_only": {"type": "boolean", "default": true},
-    "allow_network": {"type": "boolean", "default": false},
-    "confirm_network_access": {"type": "boolean", "default": false},
-    "memory_bytes": {"type": "integer", "minimum": 16777216, "maximum": 68719476736, "default": 536870912},
-    "nano_cpus": {"type": "integer", "minimum": 10000000, "maximum": 64000000000, "default": 1000000000},
-    "pids_limit": {"type": "integer", "minimum": 16, "maximum": 4096, "default": 256}
-  },
-  "output": {
-    "operation": {"type": "string", "required": true},
-    "endpoint": {"type": "string", "required": true},
-    "api_version": {"type": "string", "required": true},
-    "result": {"type": "object", "required": true}
-  },
-  "tags": ["docker", "container", "create"]
-}
+ref: "docker.container_create"
+label: "Create Restricted Docker Container"
+description: "Create a resource-bounded container without mounts or privileged capabilities"
+enabled: true
+runner_type: "python"
+runtime_version: ">=3.10"
+entry_point: "docker_action.py"
+parameter_delivery: "stdin"
+parameter_format: "json"
+output_format: "json"
+parameters:
+  daemon_key:
+    type: "string"
+    default: "docker.daemon"
+    required: true
+  image:
+    type: "string"
+    required: true
+  name:
+    type: "string"
+  command:
+    type: "array"
+    items:
+      type: "string"
+    description: "Argv array; never interpreted by a shell"
+  environment:
+    type: "object"
+    default: {}
+    secret: true
+  labels:
+    type: "object"
+    default: {}
+  user:
+    type: "string"
+  working_directory:
+    type: "string"
+  read_only:
+    type: "boolean"
+    default: true
+  allow_network:
+    type: "boolean"
+    default: false
+  confirm_network_access:
+    type: "boolean"
+    default: false
+  memory_bytes:
+    type: "integer"
+    minimum: 16777216
+    maximum: 68719476736
+    default: 536870912
+  nano_cpus:
+    type: "integer"
+    minimum: 10000000
+    maximum: 64000000000
+    default: 1000000000
+  pids_limit:
+    type: "integer"
+    minimum: 16
+    maximum: 4096
+    default: 256
+output:
+  operation:
+    type: "string"
+    required: true
+  endpoint:
+    type: "string"
+    required: true
+  api_version:
+    type: "string"
+    required: true
+  result:
+    type: "object"
+    required: true
+tags:
+  - "docker"
+  - "container"
+  - "create"

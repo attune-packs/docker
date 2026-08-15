@@ -1,23 +1,35 @@
-{
-  "ref": "docker.image_inspect",
-  "label": "Inspect Docker Image",
-  "description": "Return selected non-secret image metadata",
-  "enabled": true,
-  "runner_type": "python",
-  "runtime_version": ">=3.10",
-  "entry_point": "docker_action.py",
-  "parameter_delivery": "stdin",
-  "parameter_format": "json",
-  "output_format": "json",
-  "parameters": {
-    "daemon_key": {"type": "string", "default": "docker.daemon", "required": true},
-    "image": {"type": "string", "required": true}
-  },
-  "output": {
-    "operation": {"type": "string", "required": true},
-    "endpoint": {"type": "string", "required": true},
-    "api_version": {"type": "string", "required": true},
-    "result": {"type": "object", "required": true}
-  },
-  "tags": ["docker", "image", "inspect"]
-}
+ref: "docker.image_inspect"
+label: "Inspect Docker Image"
+description: "Return selected non-secret image metadata"
+enabled: true
+runner_type: "python"
+runtime_version: ">=3.10"
+entry_point: "docker_action.py"
+parameter_delivery: "stdin"
+parameter_format: "json"
+output_format: "json"
+parameters:
+  daemon_key:
+    type: "string"
+    default: "docker.daemon"
+    required: true
+  image:
+    type: "string"
+    required: true
+output:
+  operation:
+    type: "string"
+    required: true
+  endpoint:
+    type: "string"
+    required: true
+  api_version:
+    type: "string"
+    required: true
+  result:
+    type: "object"
+    required: true
+tags:
+  - "docker"
+  - "image"
+  - "inspect"

@@ -1,24 +1,40 @@
-{
-  "ref": "docker.container_remove",
-  "label": "Remove Docker Container",
-  "description": "Remove a stopped container without force or volume deletion after exact confirmation",
-  "enabled": true,
-  "runner_type": "python",
-  "runtime_version": ">=3.10",
-  "entry_point": "docker_action.py",
-  "parameter_delivery": "stdin",
-  "parameter_format": "json",
-  "output_format": "json",
-  "parameters": {
-    "daemon_key": {"type": "string", "default": "docker.daemon", "required": true},
-    "container": {"type": "string", "required": true},
-    "confirm": {"type": "string", "required": true, "description": "Must exactly match container"}
-  },
-  "output": {
-    "operation": {"type": "string", "required": true},
-    "endpoint": {"type": "string", "required": true},
-    "api_version": {"type": "string", "required": true},
-    "result": {"type": "object", "required": true}
-  },
-  "tags": ["docker", "container", "remove", "destructive"]
-}
+ref: "docker.container_remove"
+label: "Remove Docker Container"
+description: "Remove a stopped container without force or volume deletion after exact confirmation"
+enabled: true
+runner_type: "python"
+runtime_version: ">=3.10"
+entry_point: "docker_action.py"
+parameter_delivery: "stdin"
+parameter_format: "json"
+output_format: "json"
+parameters:
+  daemon_key:
+    type: "string"
+    default: "docker.daemon"
+    required: true
+  container:
+    type: "string"
+    required: true
+  confirm:
+    type: "string"
+    required: true
+    description: "Must exactly match container"
+output:
+  operation:
+    type: "string"
+    required: true
+  endpoint:
+    type: "string"
+    required: true
+  api_version:
+    type: "string"
+    required: true
+  result:
+    type: "object"
+    required: true
+tags:
+  - "docker"
+  - "container"
+  - "remove"
+  - "destructive"

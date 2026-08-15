@@ -251,7 +251,7 @@ class DockerPackTests(unittest.TestCase):
         ):
             return docker_client.execute_action(operation, values)
 
-    def test_flat_json_action_contracts_are_all_discovered_resources(self):
+    def test_yaml_action_contracts_are_all_discovered_resources(self):
         paths = sorted((PACK_ROOT / "actions").glob("*.yaml"))
         expected = {
             "image_build", "image_pull", "image_push", "image_inspect", "image_list", "image_remove",
@@ -260,18 +260,21 @@ class DockerPackTests(unittest.TestCase):
         }
         self.assertEqual({path.stem for path in paths}, expected)
         for path in paths:
-            action = json.loads(path.read_text(encoding="utf-8"))
-            self.assertEqual(action["ref"], f"docker.{path.stem}")
-            self.assertEqual(action["runner_type"], "python")
-            self.assertEqual(action["entry_point"], "docker_action.py")
-            self.assertEqual(action["parameter_delivery"], "stdin")
-            self.assertEqual(action["parameter_format"], "json")
-            self.assertEqual(action["output_format"], "json")
-            self.assertEqual(set(action["output"]), {"operation", "endpoint", "api_version", "result"})
-            self.assertEqual(action["parameters"]["daemon_key"]["default"], "docker.daemon")
-        create = json.loads((PACK_ROOT / "actions" / "container_create.yaml").read_text())
+            action = path.read_text(encoding="utf-8")
+            self.assertFalse(action.lstrip().startswith(("{", "[")))
+            self.assertIn(f'ref: "docker.{path.stem}"', action)
+            self.assertIn('runner_type: "python"', action)
+            self.assertIn('entry_point: "docker_action.py"', action)
+            self.assertIn('parameter_delivery: "stdin"', action)
+            self.assertIn('parameter_format: "json"', action)
+            self.assertIn('output_format: "json"', action)
+            self.assertIn('default: "docker.daemon"', action)
+            for field in ("operation", "endpoint", "api_version", "result"):
+                self.assertIn(f"\n  {field}:\n", action)
+        create = (PACK_ROOT / "actions" / "container_create.yaml").read_text()
+        parameters = create.split("parameters:\n", 1)[1].split("output:\n", 1)[0]
         forbidden = {"volumes", "mounts", "devices", "privileged", "ports", "network_mode", "cap_add"}
-        self.assertFalse(forbidden.intersection(create["parameters"]))
+        self.assertTrue(all(f"\n  {name}:" not in parameters for name in forbidden))
         self.assertFalse((PACK_ROOT / "sensors").exists())
 
     def test_source_license_and_notice_pin_verified_upstream(self):
