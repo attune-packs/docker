@@ -1,0 +1,16 @@
+Docker Engine Attune Pack
+Copyright 2026 Attune
+
+This product includes a clean-room adaptation of concepts from the
+StackStorm Exchange Docker pack:
+
+  Project: StackStorm-Exchange/stackstorm-docker
+  Source: https://github.com/StackStorm-Exchange/stackstorm-docker
+  Verified revision: 50cebd7f7d59272d09cd34261257327bff17f97e
+  Latest verified release: v1.0.0 (46e507034e19164f83e7336993cca9ded9ea8de3)
+  License: Apache License 2.0
+
+The implementation and metadata were rewritten for Attune, Docker SDK 7,
+negotiated Docker Engine API versions, structured output, and the security
+controls documented in README.md. The obsolete local-container sensor was
+not ported.

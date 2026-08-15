@@ -1,0 +1,28 @@
+{
+  "ref": "docker.container_exec",
+  "label": "Execute Docker Container Command",
+  "description": "Execute a bounded argv command without shell, stdin, TTY, or privileged mode",
+  "enabled": true,
+  "runner_type": "python",
+  "runtime_version": ">=3.10",
+  "entry_point": "docker_action.py",
+  "parameter_delivery": "stdin",
+  "parameter_format": "json",
+  "output_format": "json",
+  "parameters": {
+    "daemon_key": {"type": "string", "default": "docker.daemon", "required": true},
+    "container": {"type": "string", "required": true},
+    "confirm": {"type": "string", "required": true, "description": "Must exactly match container"},
+    "command": {"type": "array", "items": {"type": "string"}, "required": true, "description": "Non-empty argv array; no shell interpolation"},
+    "environment": {"type": "object", "default": {}, "secret": true},
+    "timeout_seconds": {"type": "integer", "minimum": 1, "maximum": 300, "default": 60},
+    "max_bytes": {"type": "integer", "minimum": 1, "maximum": 1000000, "default": 262144}
+  },
+  "output": {
+    "operation": {"type": "string", "required": true},
+    "endpoint": {"type": "string", "required": true},
+    "api_version": {"type": "string", "required": true},
+    "result": {"type": "object", "required": true}
+  },
+  "tags": ["docker", "container", "exec", "privileged"]
+}

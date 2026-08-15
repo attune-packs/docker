@@ -1,0 +1,26 @@
+{
+  "ref": "docker.container_logs",
+  "label": "Read Docker Container Logs",
+  "description": "Read bounded non-following container logs",
+  "enabled": true,
+  "runner_type": "python",
+  "runtime_version": ">=3.10",
+  "entry_point": "docker_action.py",
+  "parameter_delivery": "stdin",
+  "parameter_format": "json",
+  "output_format": "json",
+  "parameters": {
+    "daemon_key": {"type": "string", "default": "docker.daemon", "required": true},
+    "container": {"type": "string", "required": true},
+    "tail": {"type": "integer", "minimum": 1, "maximum": 10000, "default": 200},
+    "max_bytes": {"type": "integer", "minimum": 1, "maximum": 1000000, "default": 262144},
+    "timestamps": {"type": "boolean", "default": false}
+  },
+  "output": {
+    "operation": {"type": "string", "required": true},
+    "endpoint": {"type": "string", "required": true},
+    "api_version": {"type": "string", "required": true},
+    "result": {"type": "object", "required": true}
+  },
+  "tags": ["docker", "container", "logs"]
+}

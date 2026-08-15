@@ -1,0 +1,24 @@
+{
+  "ref": "docker.image_pull",
+  "label": "Pull Docker Image",
+  "description": "Pull one image with optional pack-owned registry credentials",
+  "enabled": true,
+  "runner_type": "python",
+  "runtime_version": ">=3.10",
+  "entry_point": "docker_action.py",
+  "parameter_delivery": "stdin",
+  "parameter_format": "json",
+  "output_format": "json",
+  "parameters": {
+    "daemon_key": {"type": "string", "default": "docker.daemon", "required": true},
+    "image": {"type": "string", "required": true},
+    "registry_key": {"type": "string", "description": "Optional pack-owned encrypted registry credential Key"}
+  },
+  "output": {
+    "operation": {"type": "string", "required": true},
+    "endpoint": {"type": "string", "required": true},
+    "api_version": {"type": "string", "required": true},
+    "result": {"type": "object", "required": true}
+  },
+  "tags": ["docker", "image", "pull"]
+}

@@ -1,0 +1,38 @@
+ref: docker
+label: "Docker Engine"
+description: "Guarded Docker Engine image and container operations with negotiated API versions"
+version: "0.1.0"
+author: "Attune; adapted from work by StackStorm and StackStorm Exchange contributors"
+email: "support@attune.systems"
+system: false
+enabled: true
+
+conf_schema: {}
+config: {}
+
+meta:
+  category: infrastructure
+  documentation_url: "https://github.com/attune-packs/docker"
+  repository_url: "https://github.com/attune-packs/docker"
+  source_repository: "https://github.com/StackStorm-Exchange/stackstorm-docker"
+  source_version: "1.0.0"
+  source_revision: "50cebd7f7d59272d09cd34261257327bff17f97e"
+  license: "Apache-2.0"
+
+tags: [docker, containers, images, infrastructure]
+runtime_deps: [python]
+dependencies: []
+
+testing:
+  enabled: true
+  discovery:
+    method: directory
+    path: tests
+  runners:
+    python:
+      type: unittest
+      entry_point: tests/test_pack.py
+      timeout: 120
+      result_format: simple
+  min_pass_rate: 1.0
+  on_failure: block

@@ -1,0 +1,29 @@
+{
+  "ref": "docker.image_build",
+  "label": "Build Docker Image",
+  "description": "Build and tag an image from a confined artifact context",
+  "enabled": true,
+  "runner_type": "python",
+  "runtime_version": ">=3.10",
+  "entry_point": "docker_action.py",
+  "parameter_delivery": "stdin",
+  "parameter_format": "json",
+  "output_format": "json",
+  "parameters": {
+    "daemon_key": {"type": "string", "default": "docker.daemon", "required": true, "description": "Pack-owned encrypted daemon configuration Key"},
+    "context": {"type": "string", "required": true, "description": "Build context beneath ATTUNE_ARTIFACTS_DIR"},
+    "dockerfile": {"type": "string", "default": "Dockerfile", "description": "Dockerfile path within the context"},
+    "tag": {"type": "string", "required": true},
+    "no_cache": {"type": "boolean", "default": false},
+    "network_mode": {"type": "string", "enum": ["none", "default"], "default": "none"},
+    "confirm_network_access": {"type": "boolean", "default": false},
+    "timeout_seconds": {"type": "integer", "minimum": 1, "maximum": 1800, "default": 900}
+  },
+  "output": {
+    "operation": {"type": "string", "required": true},
+    "endpoint": {"type": "string", "required": true},
+    "api_version": {"type": "string", "required": true},
+    "result": {"type": "object", "required": true}
+  },
+  "tags": ["docker", "image", "build"]
+}
