@@ -1,0 +1,12 @@
+name: Publish to standard pack index
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  publish:
+    uses: attune-system/index/.github/workflows/publish-pack.yml@main
+    secrets:
+      index_token: ${{ secrets.ATTUNE_INDEX_TOKEN }}
