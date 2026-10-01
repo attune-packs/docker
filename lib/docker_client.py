@@ -18,7 +18,7 @@ class DockerPackError(ValueError):
     """An action validation or safe-to-report execution error."""
 
 
-_KEY_REF = re.compile(r"^docker\.[a-z][a-z0-9_.-]{0,127}$")
+_KEY_REF = re.compile(r"^pack\.docker\.[a-z0-9][a-z0-9_-]{0,62}$")
 _REGISTRY = re.compile(r"^(?:[A-Za-z0-9](?:[A-Za-z0-9.-]*[A-Za-z0-9])?)(?::[0-9]{1,5})?$")
 _MAX_OUTPUT_BYTES = 1_000_000
 _MAX_CONTEXT_ENTRIES = 20_000
@@ -101,19 +101,19 @@ def _key_ref(params: dict[str, Any], name: str, default: str | None = None) -> s
     if value is None:
         return None
     if not isinstance(value, str) or not _KEY_REF.fullmatch(value):
-        raise DockerPackError(f"'{name}' must reference a pack-owned docker.* Attune Key")
+        raise DockerPackError(f"'{name}' must reference a pack.docker.* Attune Key")
     return value
 
 
 def fetch_key(ref: str) -> dict[str, Any]:
     """Fetch and decrypt a pack-owned Attune Key without exposing response details."""
     if not _KEY_REF.fullmatch(ref):
-        raise DockerPackError("credential Key must use the docker.* namespace")
+        raise DockerPackError("credential Key must use the pack.docker.* namespace")
     try:
         from attune import context
         from attune.api_client.api.secrets import get_key
 
-        response = get_key.sync_detailed(ref, client=context.client, decrypt=True)
+        response = get_key.sync_detailed(ref, client=context.client)
         if int(response.status_code) != 200 or response.parsed is None:
             raise DockerPackError(f"Attune Key '{ref}' is unavailable")
         value = response.parsed.data.value
@@ -127,7 +127,7 @@ def fetch_key(ref: str) -> dict[str, Any]:
 
 
 def _daemon_config(params: dict[str, Any]) -> tuple[str, dict[str, Any], int]:
-    ref = _key_ref(params, "daemon_key", "docker.daemon")
+    ref = _key_ref(params, "daemon_key", "pack.docker.daemon")
     assert ref is not None
     config = fetch_key(ref)
     endpoint = config.get("endpoint", "unix:///var/run/docker.sock")

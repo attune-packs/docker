@@ -244,7 +244,7 @@ class DockerPackTests(unittest.TestCase):
 
     def execute(self, operation, params=None, key_values=None):
         values = dict(params or {})
-        keys = {"docker.daemon": self.daemon}
+        keys = {"pack.docker.daemon": self.daemon}
         keys.update(key_values or {})
         with patch.dict(sys.modules, {"docker": self.docker}), patch.object(
             docker_client, "fetch_key", side_effect=lambda ref: keys[ref]
@@ -268,7 +268,7 @@ class DockerPackTests(unittest.TestCase):
             self.assertIn('parameter_delivery: "stdin"', action)
             self.assertIn('parameter_format: "json"', action)
             self.assertIn('output_format: "json"', action)
-            self.assertIn('default: "docker.daemon"', action)
+            self.assertIn('default: "pack.docker.daemon"', action)
             for field in ("operation", "endpoint", "api_version", "result"):
                 self.assertIn(f"\n  {field}:\n", action)
         create = (PACK_ROOT / "actions" / "container_create.yaml").read_text()
@@ -288,11 +288,11 @@ class DockerPackTests(unittest.TestCase):
         self.assertIn(revision, notice)
         self.assertIn("Apache License", license_text)
 
-    def test_key_lookup_requests_decryption(self):
+    def test_key_lookup_uses_canonical_ref(self):
         calls = {}
         get_key = ModuleType("attune.api_client.api.secrets.get_key")
-        get_key.sync_detailed = lambda ref, *, client, decrypt: calls.update(
-            ref=ref, client=client, decrypt=decrypt
+        get_key.sync_detailed = lambda ref, *, client: calls.update(
+            ref=ref, client=client
         ) or SimpleNamespace(status_code=200, parsed=SimpleNamespace(data=SimpleNamespace(value={"endpoint": "unix:///sock"})))
         secrets = ModuleType("attune.api_client.api.secrets")
         secrets.get_key = get_key
@@ -303,10 +303,10 @@ class DockerPackTests(unittest.TestCase):
             "attune.api_client.api.secrets": secrets,
         }
         with patch.dict(sys.modules, modules):
-            value = docker_client.fetch_key("docker.daemon")
+            value = docker_client.fetch_key("pack.docker.daemon")
         self.assertEqual(value["endpoint"], "unix:///sock")
-        self.assertEqual(calls, {"ref": "docker.daemon", "client": "execution-client", "decrypt": True})
-        with self.assertRaisesRegex(docker_client.DockerPackError, "docker.\\*"):
+        self.assertEqual(calls, {"ref": "pack.docker.daemon", "client": "execution-client"})
+        with self.assertRaisesRegex(docker_client.DockerPackError, "pack.docker.\\*"):
             docker_client.fetch_key("other.credentials")
 
     def test_local_session_negotiates_api_and_ignores_environment(self):
@@ -351,8 +351,8 @@ class DockerPackTests(unittest.TestCase):
         registry = {"registry": "registry.example.com", "username": "robot", "password": "registry-secret"}
         result = self.execute(
             "image_pull",
-            {"image": "registry.example.com/team/app:1", "registry_key": "docker.registry"},
-            {"docker.registry": registry},
+            {"image": "registry.example.com/team/app:1", "registry_key": "pack.docker.registry"},
+            {"pack.docker.registry": registry},
         )
         call = next(call for call in self.client.api.calls if call[0] == "pull")
         self.assertEqual(call[2]["auth_config"]["password"], "registry-secret")
@@ -360,8 +360,8 @@ class DockerPackTests(unittest.TestCase):
         with self.assertRaisesRegex(docker_client.DockerPackError, "does not match"):
             self.execute(
                 "image_pull",
-                {"image": "other.example/team/app:1", "registry_key": "docker.registry"},
-                {"docker.registry": registry},
+                {"image": "other.example/team/app:1", "registry_key": "pack.docker.registry"},
+                {"pack.docker.registry": registry},
             )
 
     def test_build_context_is_confined_rejects_symlinks_and_uses_structured_sdk_arguments(self):

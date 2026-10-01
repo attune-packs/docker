@@ -11,7 +11,7 @@ output_format: "json"
 parameters:
   daemon_key:
     type: "string"
-    default: "docker.daemon"
+    default: "pack.docker.daemon"
     required: true
   container:
     type: "string"

@@ -38,11 +38,11 @@ the action where that residual behavior is unacceptable.
 
 ## Keys
 
-Credentials are read only from encrypted, pack-owned Attune Keys whose refs
-begin with `docker.`. Create the default local daemon Key:
+Credentials are read only from encrypted, pack-owned Attune Keys whose canonical
+refs begin with `pack.docker.`. Create the default local daemon Key:
 
 ```sh
-attune key create --ref docker.daemon --name "Docker local daemon" \
+attune key create --local-ref daemon --name "Docker local daemon" \
   --value '{"endpoint":"unix:///var/run/docker.sock","timeout_seconds":60}' \
   --owner-type pack --owner-pack-ref docker --encrypt
 ```
@@ -75,7 +75,7 @@ registry credentials for a build.
 For authenticated pull or push, create a separate pack-owned Key:
 
 ```sh
-attune key create --ref docker.registry --name "Docker registry" \
+attune key create --local-ref registry --name "Docker registry" \
   --value '{"registry":"registry.example.com","username":"robot","password":"REPLACE"}' \
   --owner-type pack --owner-pack-ref docker --encrypt
 ```
